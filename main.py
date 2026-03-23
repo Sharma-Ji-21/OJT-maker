@@ -15,6 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dateutil.parser import parse as parse_date
 import PyPDF2
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from gemini_helper import split_work_into_days, generate_journal_entry, generate_all_journals
 from pdf_filler import fill_pdf_with_overlay
@@ -25,12 +26,23 @@ if 'VERCEL' in os.environ:
 
 app = FastAPI(title="OJT Journal Maker")
 
+# Configure for larger uploads (50MB limit)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Error handler for large uploads
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request, exc):
+    if exc.status_code == 413:
+        return JSONResponse(
+            status_code=413,
+            content={"error": "File too large. Maximum upload size is 50MB. Please use a smaller PDF or compress it."}
+        )
+    return JSONResponse(status_code=exc.status_code, content={"error": str(exc.detail)})
 
 # In-memory task storage
 tasks: dict = {}

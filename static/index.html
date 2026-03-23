@@ -357,6 +357,7 @@
     <div class="dropzone" id="dropzone">
       <div class="icon">📄</div>
       <p>Drop your PDF template here or <strong>click to upload</strong></p>
+      <p style="color: var(--muted); font-size: 0.8rem; margin-top: 6px;">Max file size: 50MB</p>
       <div class="file-name" id="file-name-display"></div>
       <input type="file" id="pdf-input" accept=".pdf" />
     </div>
@@ -527,7 +528,17 @@
     }
   });
   pdfInput.addEventListener('change', () => {
-    if (pdfInput.files[0]) fileDisplay.textContent = '✓ ' + pdfInput.files[0].name;
+    if (pdfInput.files[0]) {
+      const file = pdfInput.files[0];
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+      if (file.size > 50 * 1024 * 1024) {
+        showError('error-1', `File too large (${sizeMB}MB). Maximum is 50MB.`);
+        pdfInput.value = '';
+        fileDisplay.textContent = '';
+      } else {
+        fileDisplay.textContent = '✓ ' + file.name + ` (${sizeMB}MB)`;
+      }
+    }
   });
 
   // ── Helpers ──
