@@ -198,6 +198,19 @@ async def upload(
         page_count = len(doc)
         doc.close()
 
+        # Validate N <= PDF page count
+        if num_days > page_count:
+            return JSONResponse(
+                status_code=400,
+                content={
+                    "error": (
+                        f"The selected date range produces {num_days} working days, "
+                        f"but the uploaded PDF has only {page_count} page(s). "
+                        "Please upload a PDF with more pages or shorten the date range."
+                    )
+                },
+            )
+
         # Split work into days via Gemini
         daily_work = split_work_into_days(api_key, work_description, working_days, num_days)
 
