@@ -250,11 +250,9 @@ def fill_pdf_with_overlay(pdf_bytes: bytes, pages_data: list) -> bytes:
 
         c.setPageSize((pw, ph))
 
-        # Get data for this page (repeat last entry if fewer data than pages)
+        # Get data for this page (leave extra pages blank if no more data)
         if page_idx < len(pages_data):
             page_data = pages_data[page_idx]
-        elif pages_data:
-            page_data = pages_data[-1]
         else:
             page_data = {}
 
