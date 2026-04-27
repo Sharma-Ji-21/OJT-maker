@@ -8,12 +8,19 @@ from datetime import datetime
 # ─────────────────────────────────────────────
 # ✅ DATE FORMATTER
 # ─────────────────────────────────────────────
+def get_ordinal_suffix(day: int) -> str:
+    if 11 <= (day % 100) <= 13:
+        return 'th'
+    return {1: 'st', 2: 'nd', 3: 'rd'}.get(day % 10, 'th')
+
 def format_date(date_str: str) -> str:
     try:
         for fmt in ["%Y-%m-%d", "%d-%m-%Y", "%d/%m/%Y", "%Y/%m/%d", "%d-%m-%y"]:
             try:
                 parsed = datetime.strptime(date_str, fmt)
-                return parsed.strftime("%-d-%-m-%Y")
+                day = parsed.day
+                suffix = get_ordinal_suffix(day)
+                return parsed.strftime(f"{day}{suffix} %B %Y")
             except ValueError:
                 continue
         return date_str

@@ -644,6 +644,11 @@
     if (!val('work-desc'))   return showError('error-1', 'Please describe the work done.');
     if (!val('api-key'))     return showError('error-1', 'Please enter your Gemini API key.');
 
+    const emailStr = val('email_id');
+    if (emailStr && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailStr)) {
+      return showError('error-1', 'Please enter a valid Email Id (e.g. xyg@gmail.com).');
+    }
+
     setLoading('spinner-1', 'btn-upload', 'btn-upload-text', true, 'Processing…');
 
     currentApiKey = val('api-key');
