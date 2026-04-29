@@ -5,6 +5,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import simpleSplit
 import PyPDF2
+from gemini_helper import format_date
 
 A4_WIDTH, A4_HEIGHT = A4  # 595.27, 841.89 pts
 
@@ -170,7 +171,11 @@ def _build_overlay_page(c_canvas, page_data: dict, page_width: float, page_heigh
     new_fields = ["name", "registration_number", "start_date", "program_name", "semester", "location", "industry_partner_name", "phone_no", "email_id"]
     for f in new_fields:
         if page_data.get(f):
-            fields_to_draw[f] = page_data[f]
+            # Format start_date using ordinal format
+            if f == "start_date":
+                fields_to_draw[f] = format_date(page_data[f])
+            else:
+                fields_to_draw[f] = page_data[f]
 
     for field_key, text_value in fields_to_draw.items():
         if not text_value:
